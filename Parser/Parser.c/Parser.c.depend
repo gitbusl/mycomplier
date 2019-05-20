@@ -1,0 +1,112 @@
+# depslib dependency file v1.0
+1556367157 source:e:\learning\实验\编译原理\mycomplier\lexical_analyzer\lexical_analyzer.c\lex_function.c
+	"Lex_Head.h"
+	"Table.h"
+	<string.h>
+	<stdio.h>
+	<stdlib.h>
+	<ctype.h>
+
+1556367797 e:\learning\实验\编译原理\mycomplier\lexical_analyzer\lexical_analyzer.c\lex_head.h
+	<stdio.h>
+
+1556365392 e:\learning\实验\编译原理\mycomplier\lexical_analyzer\lexical_analyzer.c\table.h
+	"Lex_Head.h"
+
+1556367776 source:e:\learning\实验\编译原理\mycomplier\lexical_analyzer\lexical_analyzer.c\table.c
+	"Table.h"
+	<string.h>
+	<malloc.h>
+
+1557971580 source:e:\learning\实验\编译原理\mycomplier\parser\parser.c\main.c
+	<stdio.h>
+	<stdlib.h>
+	"tree.h"
+	"Parser.c"
+
+1556413736 source:e:\learning\实验\编译原理\mycomplier\lexical_analyzer\lexical_analyzer.c\main.c
+	<stdio.h>
+	<stdlib.h>
+	"Lex_Head.h"
+	"Table.h"
+
+1557969963 source:e:\learning\实验\编译原理\mycomplier\parser\lexical_analyzer.c\lex_function.c
+	"Lex_Head.h"
+	"Table.h"
+	<string.h>
+	<stdio.h>
+	<stdlib.h>
+	<ctype.h>
+
+1556367797 e:\learning\实验\编译原理\mycomplier\parser\lexical_analyzer.c\lex_head.h
+	<stdio.h>
+
+1557970953 e:\learning\实验\编译原理\mycomplier\parser\lexical_analyzer.c\table.h
+	"Lex_Head.h"
+
+1556416220 source:e:\learning\实验\编译原理\mycomplier\parser\lexical_analyzer.c\main.c
+	<stdio.h>
+	<stdlib.h>
+	"Lex_Head.h"
+	"Table.h"
+
+1556367776 source:e:\learning\实验\编译原理\mycomplier\parser\lexical_analyzer.c\table.c
+	"Table.h"
+	<string.h>
+	<malloc.h>
+
+1557975188 e:\learning\实验\编译原理\mycomplier\parser\parser.c\tree.h
+
+1558351533 e:\learning\实验\编译原理\mycomplier\parser\parser.c\parser.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"tree.h"
+	"..\Lexical_Analyzer.c\Table.h"
+
+1557746437 source:e:\learning\实验\编译原理\mycomplier\parser\lexical_analyzer.c\analyse.c
+	<stdio.h>
+	<stdlib.h>
+	"Lex_Head.h"
+	"Table.h"
+
+1557746437 source:e:\mycode\c\parser\lexical_analyzer.c\analyse.c
+	<stdio.h>
+	<stdlib.h>
+	"Lex_Head.h"
+	"Table.h"
+
+1556367797 e:\mycode\c\parser\lexical_analyzer.c\lex_head.h
+	<stdio.h>
+
+1557970953 e:\mycode\c\parser\lexical_analyzer.c\table.h
+	"Lex_Head.h"
+
+1557969963 source:e:\mycode\c\parser\lexical_analyzer.c\lex_function.c
+	"Lex_Head.h"
+	"Table.h"
+	<string.h>
+	<stdio.h>
+	<stdlib.h>
+	<ctype.h>
+
+1556367776 source:e:\mycode\c\parser\lexical_analyzer.c\table.c
+	"Table.h"
+	<string.h>
+	<malloc.h>
+
+1557971580 source:e:\mycode\c\parser\parser.c\main.c
+	<stdio.h>
+	<stdlib.h>
+	"tree.h"
+	"Parser.c"
+
+1557975188 e:\mycode\c\parser\parser.c\tree.h
+
+1558354990 e:\mycode\c\parser\parser.c\parser.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"tree.h"
+	"..\Lexical_Analyzer.c\Table.h"
+
