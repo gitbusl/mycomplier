@@ -16,16 +16,14 @@ Re      --> # include < Vari . h >
 Main_Func --> int main ( ) Block
 Block   --> { Decls Stmts }
 Decls   --> Decl Decls | null
-Decl    --> Basic Vari Init ;
-Init    --> = Bool
+Decl    --> Basic Vari = Val ;
 Stmts   --> Stmt Stmts | null
 Stmt    --> if ( Bool ) Stmt ELSE
-        --> while ( Bool ) Stmt
-        --> Block
-        --> Loc = Bool ;
-        --> Return Bool ;
+        --> while ( Bool ) {Stmt}
+        --> Vari = Bool ;
+        --> Return 0 ;
+		--> Vari("something");
 ELSE    --> else Stmt | null
-Loc     --> Vari
 Bool    --> Expr == Expr | Expr != Expr | Expr > Expr | Expr < Expr | Expr
 Expr    --> Term + Expr | Term - Expr | Term
 Term    --> Unary * Term | Unary / Term | Unary
@@ -58,9 +56,8 @@ static struct WordNode* Last;//指向正在分析的词法单元结点
 static struct Syntax_Node * Last_token;//指向上一个分析的语法单元结点
 static struct Syntax_Node * token;//指向正在分析的语法单元结点
 
-int Forword();//Forword 取出下一个待分析的语法单元结点
-int UnForword();//UnForword 回退语法单元结点
-int SetCurrent(struct WordNode* now);//设置语法分析词法单元链
+void Forword();//Forword 取出下一个待分析的语法单元结点
+void UnForword();//UnForword 回退语法单元结点
 //具体的递归下降语法分析函数
 struct Syntax_Node * Program(struct WordNode *head);//Program 语法单元的分析程序
 struct Syntax_Node * Res();//Res 语法单元的分析程序
@@ -69,15 +66,13 @@ struct Syntax_Node * Main_Func();//Main_Func 语法单元的分析程序
 struct Syntax_Node * Block();//Block 语法单元的分析程序
 struct Syntax_Node * Decls();//Decls 语法单元的分析程序
 struct Syntax_Node * Decl();//Decl 语法单元的分析程序
-struct Syntax_Node * Init();//Init 语法单元的分析程序
 struct Syntax_Node * Stmts();//Stmts 语法单元的分析程序
 struct Syntax_Node * Stmt();//Stmt 语法单元的分析程序
-struct Syntax_Node * Loc();//Loc 语法单元的分析程序
 struct Syntax_Node * Bool();//Bool 语法单元的分析程序
 struct Syntax_Node * Expr();//Expr 语法单元的分析程序
 struct Syntax_Node * Term();//Term 语法单元的分析程序
 struct Syntax_Node * Unary();//Unary 语法单元的分析程序
 struct Syntax_Node * Factor();//Factor 语法单元的分析程序
-int Error(int E_code,struct Syntax_Node *token,struct Syntax_Node *This);//错误处理程序
-int PrintSyntaxTree(struct Syntax_Node* Head,int Count,FILE*out);//语法树的打印输出程序
+void Error(int E_code,struct Syntax_Node *token,struct Syntax_Node *This);//错误处理程序
+void PrintSyntaxTree(struct Syntax_Node* Head,int Count,FILE*out);//语法树的打印输出程序
 #endif // TREE_H_INCLUDED

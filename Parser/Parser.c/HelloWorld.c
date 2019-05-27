@@ -4,12 +4,15 @@
 int main()
 {
 	int i=2;
-	i=i++;
-	//ÐÐ×¢ÊÍ
-	printf("Hello World!!!\n"); 
-	/*
-	¶Î×¢ÊÍ
-	*/
+	int j=1;
+	/*i=i+2;
+	if(j>0){
+		printf("hello");
+	}
+	while(j>0){
+		printf("world\n");
+	}*/
+	printf("Hello World\n");
 	return 0;
 }
 

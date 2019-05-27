@@ -8,7 +8,7 @@
 //语法树采用二叉树
 
 //取出语法分析单元      前进一步
-int Forword()
+void Forword()
 {
     if(Now)//词串结束
     {
@@ -24,16 +24,14 @@ int Forword()
         Last=Now;//保存上一个词法单元结点
         Now=Now->next;//单词指针后移
     }
-    return 0;
 }
 
 //回退词法单元结点
-int UnForword()
+void UnForword()
 {
     Now=Last;
     free(token);//free掉当前token
     token=Last_token;//从Last_token取出上一个token
-    return 0;
 }
 
 //Program 语法单元的分析程序
@@ -181,8 +179,12 @@ struct Syntax_Node * Block(){
 //            struct Syntax_Node* son4=token;
             This->Bro=NULL;
             This->Son=son1;
-            son1->Bro=son2;
-            son2->Bro=son3;
+            if(son2){
+                son1->Bro=son2;
+                son2->Bro=son3;
+            }
+            else{son1->Bro=son3;}
+
 //            son3->Bro=son4;
             son3->Bro=NULL;
             This->Varnum=This->len=This->number=This->type=This->value=0;
@@ -198,28 +200,28 @@ struct Syntax_Node * Decls(){
     Forword();
     struct Syntax_Node* This=malloc(sizeof(struct Syntax_Node));
     This->Word="Decls";
-    if(token->type==KEY)//first(Decls)=basic  怎么解决？？？
+    if(!strcmp(token->Word,"int"))//first(Decls)=basic  怎么解决？？？
     {
         struct Syntax_Node *son1=Decl();
         struct Syntax_Node *son2=Decls();
         This->Son=son1;
         This->Bro=NULL;
         son1->Bro=son2;
-        son2->Bro=NULL;
+        if(son2){son2->Bro=NULL;}
         This->Varnum=This->len=This->number=This->type=This->value=0;
         return This;
     }
-    else if(token->Word=="if"){
+    else if(!strcmp(token->Word,"if")){
         UnForword();
         return NULL;
     }
-    else{Error(0,token,This);return This;}//返回空 follow集合不正确
+    else{UnForword();return NULL;}//返回空 follow集合不正确
 
 };
 
 
 //Decl语法单元的分析程序
-//产生式Decl    --> Basic Vari Init ;
+//产生式Decl    --> Basic Vari = Val ;
 //first(Decl)=Basic
 struct Syntax_Node * Decl(){
     struct Syntax_Node* This=malloc(sizeof(struct Syntax_Node));
@@ -229,37 +231,51 @@ struct Syntax_Node * Decl(){
     if(token->type==VARIABLE){//token是变量
         struct Syntax_Node *son2=token;
         Forword();
-        if(token->type==VALUE){//token 是值
+        if(!strcmp(token->Word,"=")){//改动文法
             struct Syntax_Node *son3=token;
             Forword();
-            if(token->Word==";"){
-                struct Syntax_Node *son4=token;
+            if(token->type==VALUE){
+                    struct Syntax_Node *son4=token;
+                    Forword();
+                if(!strcmp(token->Word,";")){
+                struct Syntax_Node *son5=token;
                 This->Son=son1;
                 This->Bro=NULL;
                 son1->Bro=son2;
                 son2->Bro=son3;
                 son3->Bro=son4;
-                son4->Bro=NULL;
+                son4->Bro=son5;
+                son5->Bro=NULL;
                 This->Varnum=This->len=This->number=This->type=This->value=0;
                 return This;
+                }else{Error(2,token,This);return NULL;}
             }
-        }
+        }else{Error(2,token,This);return NULL;}
     }else{Error(2,token,This);return NULL;}
-
 };
-
-//Init语法单元的分析程序
-//产生式Init    --> = Bool
-//first(Init)="="
-struct Syntax_Node * Init(){};
 
 //Stmts语法单元的分析程序
 //产生式Stmts--> Stmt Stmts | null
-//first(Stmts)=first(Stmt)="if" follow(Decls)="}"
+//first(Stmts)=first(Stmt)={if,while,Vari,return} follow(Decls)="}"
 struct Syntax_Node * Stmts(){
-struct Syntax_Node* This=malloc(sizeof(struct Syntax_Node));
-This->Word="Stmts";
-return This;
+    struct Syntax_Node* This=malloc(sizeof(struct Syntax_Node));
+    This->Word="Stmts";
+    Forword();
+    if(!strcmp(token->Word,"if")||!strcmp(token->Word,"while")||!strcmp(token->Word,"return")||(token->type==VARIABLE)){
+        struct Syntax_Node* son1=Stmt();
+        struct Syntax_Node* son2=Stmts();
+        This->Bro=NULL;
+        This->Son=son1;
+        son1->Bro=son2;
+        if(son2)son2->Bro=NULL;
+        return This;
+    }
+    else{
+        UnForword();
+        Error(2,token,This);
+        return NULL;
+    }
+
 };
 
 //Stmt语法单元的分析程序
@@ -269,56 +285,140 @@ return This;
         --> Loc = Bool ;
         --> Return Bool ;*/
 //first(Stmt)={"if","while","{",Vari,"Return"}
-struct Syntax_Node * Stmt(){};
+struct Syntax_Node * Stmt(){
+    char str[128];
+    struct Syntax_Node* This=malloc(sizeof(struct Syntax_Node));
+    This->Word="Stmt";
+    struct Syntax_Node* son1=token;
+    if(!strcmp(token->Word,"if")){}
+    else if(!strcmp(token->Word,"while")){}
+    else if(!strcmp(token->Word,"return")){
+        Forword();
+        if(!strcmp(token->Word,"0")){
+            struct Syntax_Node* son2=token;
+            Forword();
+            if(!strcmp(token->Word,";")){
+                struct Syntax_Node* son3=token;
+                This->Bro=NULL;
+                This->Son=son1;
+                son1->Bro=son2;
+                son2->Bro=son3;
+                return This;
+            }
+        }
 
-//Loc语法单元的分析程序
-//产生式Loc     --> Vari
-//first(Loc)=Vari
-struct Syntax_Node * Loc(){};
+    }
+    else if(token->type==VARIABLE){
+        Forword();
+        if(!strcmp(token->Word,"=")){
+            struct Syntax_Node* son2=token;
+            struct Syntax_Node* son3=Bool();
+            Forword();
+ //           if(!strcmp(token->Word,";")){
+ //               struct Syntax_Node* son4=token;
+                This->Bro=NULL;
+                This->Son=son1;
+                son1->Bro=son2;
+                son2->Bro=son3;
+   //             son3->Bro=son4;
+  //          }
+        }
+        else if(!strcmp(token->Word,"(")){
+            struct Syntax_Node* son2=token;
+            Forword();
+            struct Syntax_Node* son3=token;
+            if(!strcmp(token->Word,"\"")){
+                strcpy(&str,"\"");
+                Forword();
+                while(strcmp(token->Word,"\"")){
+                    strcat(&str,token->Word);
+                    Forword();
+                }
+                strcat(&str,"\"");
+                strcpy(son3->Word,str);
+                Forword();
+                if(!strcmp(token->Word,")")){
+                    struct Syntax_Node* son4=token;
+                    Forword();
+                    if(!strcmp(token->Word,";")){
+                    struct Syntax_Node* son5=token;
+                    This->Bro=NULL;
+                    This->Son=son1;
+                    son1->Bro=son2;
+                    son2->Bro=son3;
+                    son3->Bro=son4;
+                    son4->Bro=son5;
+                    return This;
+                    }
+                }
+            }
+        }
+    }
+    else{Error(2,token,This);return NULL;}
+    return This;
+};
 
 //Bool语法单元的分析程序
 //产生式Bool    --> Expr == Expr | Expr != Expr | Expr > Expr | Expr < Expr | Expr
 //first(Bool)=first(Expr)=first(Term)=first(Unary)=first(Factor)="("
-struct Syntax_Node * Bool(){};
+struct Syntax_Node * Bool(){
+    struct Syntax_Node* This=malloc(sizeof(struct Syntax_Node));
+    This->Word="Bool";
+    return This;
+};
 
 //Expr语法单元的分析程序
 //产生式Expr    --> Term + Expr | Term - Expr | Term
 //first(Expr)=first(Term)=first(Unary)=first(Factor)="("
-struct Syntax_Node * Expr(){};
+struct Syntax_Node * Expr(){
+    struct Syntax_Node* This=malloc(sizeof(struct Syntax_Node));
+    This->Word="Expr";
+    return This;
+};
 
 //Term语法单元的分析程序
 //产生式Term    --> Unary * Term | Unary / Term | Unary
 //first(Term)=first(Unary)=first(Factor)="("
-struct Syntax_Node * Term(){};
+struct Syntax_Node * Term(){
+    struct Syntax_Node* This=malloc(sizeof(struct Syntax_Node));
+    This->Word="Term";
+    return This;
+};
 
 //Unary语法单元的分析程序
 //产生式Unary   --> ! Factor | - Factor | Factor ++ | Factor -- | Factor
 //first(Unary)=first(Factor)="("
-struct Syntax_Node * Unary(){};
+struct Syntax_Node * Unary(){
+    struct Syntax_Node* This=malloc(sizeof(struct Syntax_Node));
+    This->Word="Unary";
+    return This;
+};
 
 //Factor语法单元的分析程序
 //产生式Factor  --> ( Bool ) | Vari | Value
 //first(Factor)="("
-struct Syntax_Node * Factor(){};
+struct Syntax_Node * Factor(){
+    struct Syntax_Node* This=malloc(sizeof(struct Syntax_Node));
+    This->Word="Factor";
+    return This;
+};
 
 //错误处理子程序
-int Error(int E_code,struct Syntax_Node *e,struct Syntax_Node *This)
+void Error(int E_code,struct Syntax_Node *e,struct Syntax_Node *This)
 {
     printf("in func:%s\t%d\n\tERROR:\tCode:%d %s\n",This->Word,e->len,E_code,Error_Messages[E_code]);
-    return 0;
 }
 
 
 //打印空格,打印语法树时调用,让语法树对齐
-int PrintSpace(int Count,FILE*out)
+void PrintSpace(int Count,FILE*out)
 {
     int i=0;
     for(i=0; i<Count; i++)
         fprintf(out," ");
-    return 0;
 }
 //打印语法树
-int PrintSyntaxTree(struct Syntax_Node* Head,int Count,FILE*out)
+void PrintSyntaxTree(struct Syntax_Node* Head,int Count,FILE*out)
 {
     if(Head)
     {
@@ -335,5 +435,4 @@ int PrintSyntaxTree(struct Syntax_Node* Head,int Count,FILE*out)
             PrintSyntaxTree(Head->Son,Count,out);
         }
     }
-    return 0;
 }
