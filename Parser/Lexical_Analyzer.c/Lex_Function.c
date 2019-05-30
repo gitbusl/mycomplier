@@ -31,7 +31,7 @@ int isDoubleOpe(char c1, char c2)
 }
 
 //扫描子程序，单词读取函数  读取一个单词  输出 词串结点
-struct WordNode* getWord(FILE* filepointer)
+struct wordNode* getword(FILE* filepointer)
 {
 	char in = 0;//暂存读入字符
 	char word[127];//单词
@@ -44,10 +44,10 @@ struct WordNode* getWord(FILE* filepointer)
 	if(in==EOF)return NULL;
 	//空格,返回下一个单词
 	if (isspace(in))
-		{ return getWord(filepointer); }
+		{ return getword(filepointer); }
     //换行符
     if (in==10)
-		{ rowcount++;return getWord(filepointer); }
+		{ rowcount++;return getword(filepointer); }
 
     //可能是注释语句
 	if (in == '/')
@@ -59,7 +59,7 @@ struct WordNode* getWord(FILE* filepointer)
 			while ((in = getc(filepointer)) != EOF)//抛弃本行所有内容
 			{
 			    if (in == 10)//直到读取到换行符
-				{ rowcount++;return getWord(filepointer); }//抛掉注释后,返回一个单词
+				{ rowcount++;return getword(filepointer); }//抛掉注释后,返回一个单词
 			}
 		}
 		//段注释
@@ -72,7 +72,7 @@ struct WordNode* getWord(FILE* filepointer)
                     {
 						if ((in = getc(filepointer)) == '/' )//再读取一个一个字符,进一步判断是否结束
 						{
-							return getWord(filepointer);//抛掉注释后,返回一个单词
+							return getword(filepointer);//抛掉注释后,返回一个单词
 						}
                         else ungetc(in,filepointer);//段注释未结束,放回字符----防止**/结束的情况
                     }
@@ -150,25 +150,25 @@ struct WordNode* getWord(FILE* filepointer)
     }
 
     //将读取到的单词组装成词串结点
-	struct WordNode* node = malloc(sizeof(struct WordNode));
+	struct wordNode* node = malloc(sizeof(struct wordNode));
 
 	node->type = Type;//单词类型
     node->row=rowcount;
-	node->number = WordCount++;//词串计数加一
+	node->number = wordCount++;//词串计数加一
 
 	node->Varnum = 0;//单词在表中的序号
 
 	node->next = NULL;//下一结点
 
 		word[i++] = '\0';
-		node->Word = malloc(i * sizeof(char));
-		strcpy(node->Word, word);
+		node->word = malloc(i * sizeof(char));
+		strcpy(node->word, word);
 		node->value = Value;
 	return node;//返回结点
 }
 
 //单词分析函数  进一步分析单词类型   将变量写到表中
-void AnalyseWord(struct WordNode* node)
+void Analyseword(struct wordNode* node)
 {
 	if (node->type == VARIABLE)
 	{
@@ -190,7 +190,7 @@ void AnalyseWord(struct WordNode* node)
 }
 
 //词串添加函数    把结点添加到词串链表
-void addNode(struct WordHead* Head, struct WordNode* node)
+void addNode(struct wordHead* Head, struct wordNode* node)
 {
 	if (Head->nodecount == 0)//词串为空
 	{
@@ -200,7 +200,7 @@ void addNode(struct WordHead* Head, struct WordNode* node)
 	}
 	else
     {
-	struct WordNode * temp = Head->last;
+	struct wordNode * temp = Head->last;
 	temp->next = node;
 	node->next = NULL;
 	Head->last = node;
@@ -209,13 +209,13 @@ void addNode(struct WordHead* Head, struct WordNode* node)
 }
 
 //词串输出函数    将分析得到的单词串输出
-int OutPutNode(struct WordHead* Head,FILE* out)
+int OutPutNode(struct wordHead* Head,FILE* out)
 {
 	int i = 0;
     printf("\n词法分析结果：\n\n");
 	if (Head != NULL)
 	{
-		struct WordNode* node = Head->first;
+		struct wordNode* node = Head->first;
         //printf("序号\t行号\t类型\t表序号\t单词\n");
         fprintf(out,"序号\t行号\t类型\t表序号\t单词\n");
 		while (node != NULL)
@@ -238,8 +238,8 @@ int OutPutNode(struct WordHead* Head,FILE* out)
                     fprintf(out,"%f\n", node->value); }
 			else
 			{
-			    //printf("%s\n", node->Word);
-			    fprintf(out,"%s\n", node->Word); }
+			    //printf("%s\n", node->word);
+			    fprintf(out,"%s\n", node->word); }
 			i++;
 			node = node->next;
 		}

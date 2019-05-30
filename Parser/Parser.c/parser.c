@@ -8,7 +8,7 @@
 //语法树采用二叉树
 
 //取出语法分析单元      前进一步
-void Forword()
+void Advance()
 {
     if(Now)//词串结束
     {
@@ -17,7 +17,7 @@ void Forword()
         token->type=Now->type;
         token->Varnum=Now->Varnum;
         token->number=Now->number;
-        token->Word=Now->Word;
+        token->word=Now->word;
         token->value=Now->value;
         token->len=Now->row;
         token->Bro=token->Son=NULL;
@@ -27,7 +27,7 @@ void Forword()
 }
 
 //回退词法单元结点
-void UnForword()
+void Unadvance()
 {
     Now=Last;
     free(token);//free掉当前token
@@ -37,7 +37,7 @@ void UnForword()
 //Program 语法单元的分析程序
 //产生式 Program --> Res Main_Func
 //first(Program)=first(Res)
-struct Syntax_Node * Program(struct WordNode *head){
+struct Syntax_Node * Program(struct wordNode *head){
     Now=head;
     Last=NULL;//传递词串开始语法分析
     struct Syntax_Node* This=malloc(sizeof(struct Syntax_Node));//创建根节点Program
@@ -53,8 +53,7 @@ struct Syntax_Node * Program(struct WordNode *head){
         This->Son=son2;
     }
     //初始化当前节点
-    This->Varnum=This->len=This->number=This->type=This->value=0;
-    This->Word="Program";
+    This->word="Program";
     return This;//函数结束,返回子树
 };
 
@@ -62,10 +61,10 @@ struct Syntax_Node * Program(struct WordNode *head){
 //产生式 Res--> Re Res | null
 //first(Res)=first(Re)='#' follow(Res)=first(Main_Func)=int
 struct Syntax_Node * Res(){
-    Forword();//取出语法单位
+    Advance();//取出语法单位
     struct Syntax_Node* This=malloc(sizeof(struct Syntax_Node));
-    This->Word="Res";//创建当前节点
-    if(!strcmp(token->Word,"#")){
+    This->word="Res";//创建当前节点
+    if(!strcmp(token->word,"#")){
 
         struct Syntax_Node* son1=Re();//声明分析子程序
         struct Syntax_Node* son2=Res();//多重声明
@@ -73,7 +72,7 @@ struct Syntax_Node * Res(){
         son1->Bro=son2;//子树连接
         return This;
     }
-    else if(!strcmp(token->Word,"int")){
+    else if(!strcmp(token->word,"int")){
         return NULL;
     }
     else{
@@ -86,30 +85,30 @@ struct Syntax_Node * Res(){
 //first(Re)='#'
 struct Syntax_Node * Re(){
     struct Syntax_Node* This=malloc(sizeof(struct Syntax_Node));
-    This->Word="Re";
+    This->word="Re";
     struct Syntax_Node* son1=token;
-    Forword();
-    if(!strcmp(token->Word,"include")){
+    Advance();
+    if(!strcmp(token->word,"include")){
             struct Syntax_Node* son2=token;
             son1->Bro=son2;
-            Forword();
-        if(!strcmp(token->Word,"<")){
+            Advance();
+        if(!strcmp(token->word,"<")){
             struct Syntax_Node* son3=token;
             son2->Bro=son3;
-            Forword();
+            Advance();
             if(token->type==VARIABLE){
                 struct Syntax_Node* son4=token;
                 son3->Bro=son4;
-                Forword();
-                if(!strcmp(token->Word,".")){
+                Advance();
+                if(!strcmp(token->word,".")){
                 struct Syntax_Node* son5=token;
                 son4->Bro=son5;
-                Forword();
-                    if(!strcmp(token->Word,"h")){
+                Advance();
+                    if(!strcmp(token->word,"h")){
                     struct Syntax_Node* son6=token;
                     son5->Bro=son6;
-                    Forword();
-                        if(!strcmp(token->Word,">")){
+                    Advance();
+                        if(!strcmp(token->word,">")){
                         struct Syntax_Node* son7=token;
                         son6->Bro=son7;
             }else{Error(1,token,This);}
@@ -121,7 +120,6 @@ struct Syntax_Node * Re(){
     else{Error(2,token,This);}
     This->Son=son1;
     This->Bro=NULL;
-    This->Varnum=This->len=This->number=This->type=This->value=0;
     return This;
 };
 
@@ -130,17 +128,17 @@ struct Syntax_Node * Re(){
 //first(Main_Func)="int"
 struct Syntax_Node * Main_Func(){
     struct Syntax_Node *This=malloc(sizeof(struct Syntax_Node));
-    This->Word="Main_Func";
-    if(!strcmp(token->Word,"int")){
+    This->word="Main_Func";
+    if(!strcmp(token->word,"int")){
         struct Syntax_Node* son1=token;
-        Forword();
-        if(!strcmp(token->Word,"main")){
+        Advance();
+        if(!strcmp(token->word,"main")){
             struct Syntax_Node *son2=token;
-            Forword();
-            if(!strcmp(token->Word,"(")){
+            Advance();
+            if(!strcmp(token->word,"(")){
                 struct Syntax_Node *son3=token;
-                Forword();
-                if(!strcmp(token->Word,")")){
+                Advance();
+                if(!strcmp(token->word,")")){
                     struct Syntax_Node *son4=token;
                     struct Syntax_Node *son5=Block();
                     This->Son=son1;
@@ -149,7 +147,6 @@ struct Syntax_Node * Main_Func(){
                     son3->Bro=son4;
                     son4->Bro=son5;
                     This->Bro=NULL;
-                    This->Varnum=This->len=This->number=This->type=This->value=0;
                     return This;
                 }
                 else{Error(1,token,This);return NULL;}
@@ -166,17 +163,17 @@ struct Syntax_Node * Main_Func(){
 //first(Block)="{"
 struct Syntax_Node * Block(){
     struct Syntax_Node* This=malloc(sizeof(struct Syntax_Node));
-    This->Word="Block";
-    Forword();
-    if(strcmp(token->Word,"{")){Error(1,token,This);return NULL;}
+    This->word="Block";
+    Advance();
+    if(strcmp(token->word,"{")){Error(1,token,This);return NULL;}
     else{
         struct Syntax_Node* son1=token;
         struct Syntax_Node* son2=Decls();
         struct Syntax_Node* son3=Stmts();
-//       Forword();
-//        if(strcmp(token->Word,"}")){Error(1,token,This);return NULL;}注释 方便调试
-//        else{
-//            struct Syntax_Node* son4=token;
+       Advance();
+        if(strcmp(token->word,"}")){Error(1,token,This);return NULL;}//注释 方便调试
+        else{
+            struct Syntax_Node* son4=token;
             This->Bro=NULL;
             This->Son=son1;
             if(son2){
@@ -185,11 +182,9 @@ struct Syntax_Node * Block(){
             }
             else{son1->Bro=son3;}
 
-//            son3->Bro=son4;
-            son3->Bro=NULL;
-            This->Varnum=This->len=This->number=This->type=This->value=0;
+            son3->Bro=son4;
             return This;
- //       }
+        }
     }
 };
 
@@ -197,10 +192,10 @@ struct Syntax_Node * Block(){
 //产生式Decls   --> Decl Decls | null
 //first(Decls)=first(Decl)=Basic follow(Decls)=first(Stmts)=first(Stmt)={"if","while","basic"}
 struct Syntax_Node * Decls(){
-    Forword();
+    Advance();
     struct Syntax_Node* This=malloc(sizeof(struct Syntax_Node));
-    This->Word="Decls";
-    if(!strcmp(token->Word,"int"))//first(Decls)=basic  怎么解决？？？
+    This->word="Decls";
+    if(!strcmp(token->word,"int"))//first(Decls)=basic  怎么解决？？？
     {
         struct Syntax_Node *son1=Decl();
         struct Syntax_Node *son2=Decls();
@@ -208,14 +203,13 @@ struct Syntax_Node * Decls(){
         This->Bro=NULL;
         son1->Bro=son2;
         if(son2){son2->Bro=NULL;}
-        This->Varnum=This->len=This->number=This->type=This->value=0;
         return This;
     }
-    else if(!strcmp(token->Word,"if")){
-        UnForword();
+    else if(!strcmp(token->word,"if")){
+        Unadvance();
         return NULL;
     }
-    else{UnForword();return NULL;}//返回空 follow集合不正确
+    else{Unadvance();return NULL;}//返回空 follow集合不正确
 
 };
 
@@ -225,19 +219,19 @@ struct Syntax_Node * Decls(){
 //first(Decl)=Basic
 struct Syntax_Node * Decl(){
     struct Syntax_Node* This=malloc(sizeof(struct Syntax_Node));
-    This->Word="Decl";
+    This->word="Decl";
     struct Syntax_Node *son1=token;
-    Forword();
+    Advance();
     if(token->type==VARIABLE){//token是变量
         struct Syntax_Node *son2=token;
-        Forword();
-        if(!strcmp(token->Word,"=")){//改动文法
+        Advance();
+        if(!strcmp(token->word,"=")){//改动文法
             struct Syntax_Node *son3=token;
-            Forword();
+            Advance();
             if(token->type==VALUE){
                     struct Syntax_Node *son4=token;
-                    Forword();
-                if(!strcmp(token->Word,";")){
+                    Advance();
+                if(!strcmp(token->word,";")){
                 struct Syntax_Node *son5=token;
                 This->Son=son1;
                 This->Bro=NULL;
@@ -246,7 +240,6 @@ struct Syntax_Node * Decl(){
                 son3->Bro=son4;
                 son4->Bro=son5;
                 son5->Bro=NULL;
-                This->Varnum=This->len=This->number=This->type=This->value=0;
                 return This;
                 }else{Error(2,token,This);return NULL;}
             }
@@ -259,9 +252,9 @@ struct Syntax_Node * Decl(){
 //first(Stmts)=first(Stmt)={if,while,Vari,return} follow(Decls)="}"
 struct Syntax_Node * Stmts(){
     struct Syntax_Node* This=malloc(sizeof(struct Syntax_Node));
-    This->Word="Stmts";
-    Forword();
-    if(!strcmp(token->Word,"if")||!strcmp(token->Word,"while")||!strcmp(token->Word,"return")||(token->type==VARIABLE)){
+    This->word="Stmts";
+    Advance();
+    if(!strcmp(token->word,"if")||!strcmp(token->word,"while")||!strcmp(token->word,"return")||(token->type==VARIABLE)){
         struct Syntax_Node* son1=Stmt();
         struct Syntax_Node* son2=Stmts();
         This->Bro=NULL;
@@ -271,8 +264,7 @@ struct Syntax_Node * Stmts(){
         return This;
     }
     else{
-        UnForword();
-        Error(2,token,This);
+        Unadvance();
         return NULL;
     }
 
@@ -288,16 +280,66 @@ struct Syntax_Node * Stmts(){
 struct Syntax_Node * Stmt(){
     char str[128];
     struct Syntax_Node* This=malloc(sizeof(struct Syntax_Node));
-    This->Word="Stmt";
+    This->word="Stmt";
     struct Syntax_Node* son1=token;
-    if(!strcmp(token->Word,"if")){}
-    else if(!strcmp(token->Word,"while")){}
-    else if(!strcmp(token->Word,"return")){
-        Forword();
-        if(!strcmp(token->Word,"0")){
+    if(!strcmp(token->word,"if")){
+        son1=token;//'if' 放到子树
+        Advance();
+        if(strcmp(token->word,"("))//'('放到子树
+            Error(1,token,This);
+        struct Syntax_Node* son2=token;
+        struct Syntax_Node* son3=Bool();
+        Advance();
+        if(strcmp(token->word,")"))
+            Error(1,token,This);
+        struct Syntax_Node* son4=token;
+        struct Syntax_Node* son5=Block();
+        Advance();
+        if(!strcmp(token->word,"else"))//判断是否有else语句
+        {
+            struct Syntax_Node* son6=token;
+            struct Syntax_Node* son7=Block();
+            This->Bro=NULL;
+            This->Son=son1;
+            son1->Bro=son2;
+            son2->Bro=son3;
+            son3->Bro=son4;
+            son4->Bro=son5;
+            son5->Bro=son6;
+            son6->Bro=son7;
+            return This;
+        }
+        Unadvance();
+        This->Bro=NULL;
+        This->Son=son1;
+        son1->Bro=son2;
+        son2->Bro=son3;
+        son3->Bro=son4;
+        son4->Bro=son5;
+        son5->Bro=NULL;
+    }
+    else if(!strcmp(token->word,"while")){
+        Advance();
+        if(strcmp(token->word,"("))
+           Error(1,token,This);
+        struct Syntax_Node* son2=token;
+        struct Syntax_Node* son3=Bool();
+        Advance();
+        if(strcmp(token->word,")"))
+            Error(1,token,This);
+        struct Syntax_Node* son4=Block();
+        This->Bro=NULL;
+        This->Son=son1;
+        son1->Bro=son2;
+        son2->Bro=son3;
+        son3->Bro=son4;
+    }
+    else if(!strcmp(token->word,"return")){
+        Advance();
+        if(!strcmp(token->word,"0")){
             struct Syntax_Node* son2=token;
-            Forword();
-            if(!strcmp(token->Word,";")){
+            Advance();
+            if(!strcmp(token->word,";")){
                 struct Syntax_Node* son3=token;
                 This->Bro=NULL;
                 This->Son=son1;
@@ -309,38 +351,39 @@ struct Syntax_Node * Stmt(){
 
     }
     else if(token->type==VARIABLE){
-        Forword();
-        if(!strcmp(token->Word,"=")){
+        Advance();
+        if(!strcmp(token->word,"=")){
             struct Syntax_Node* son2=token;
-            struct Syntax_Node* son3=Bool();
-            Forword();
- //           if(!strcmp(token->Word,";")){
- //               struct Syntax_Node* son4=token;
+            struct Syntax_Node* son3=Expr();
+            Advance();
+            if(!strcmp(token->word,";")){
+                struct Syntax_Node* son4=token;
                 This->Bro=NULL;
                 This->Son=son1;
                 son1->Bro=son2;
                 son2->Bro=son3;
-   //             son3->Bro=son4;
-  //          }
+                son3->Bro=son4;
+                return This;
+            }
         }
-        else if(!strcmp(token->Word,"(")){
+        else if(!strcmp(token->word,"(")){
             struct Syntax_Node* son2=token;
-            Forword();
+            Advance();
             struct Syntax_Node* son3=token;
-            if(!strcmp(token->Word,"\"")){
+            if(!strcmp(token->word,"\"")){
                 strcpy(&str,"\"");
-                Forword();
-                while(strcmp(token->Word,"\"")){
-                    strcat(&str,token->Word);
-                    Forword();
+                Advance();
+                while(strcmp(token->word,"\"")){
+                    strcat(&str,token->word);
+                    Advance();
                 }
                 strcat(&str,"\"");
-                strcpy(son3->Word,str);
-                Forword();
-                if(!strcmp(token->Word,")")){
+                strcpy(son3->word,str);
+                Advance();
+                if(!strcmp(token->word,")")){
                     struct Syntax_Node* son4=token;
-                    Forword();
-                    if(!strcmp(token->Word,";")){
+                    Advance();
+                    if(!strcmp(token->word,";")){
                     struct Syntax_Node* son5=token;
                     This->Bro=NULL;
                     This->Son=son1;
@@ -359,20 +402,50 @@ struct Syntax_Node * Stmt(){
 };
 
 //Bool语法单元的分析程序
-//产生式Bool    --> Expr == Expr | Expr != Expr | Expr > Expr | Expr < Expr | Expr
-//first(Bool)=first(Expr)=first(Term)=first(Unary)=first(Factor)="("
+//产生式Bool    --> Vari == Value | Vari != Value | Vari > Value | Vari < Value
+//first(Bool)=first(Expr)=first(Term)=first(Unary)={}
 struct Syntax_Node * Bool(){
     struct Syntax_Node* This=malloc(sizeof(struct Syntax_Node));
-    This->Word="Bool";
-    return This;
+    This->word="Bool";
+    Advance();
+    if(token->type==VARIABLE){
+        struct Syntax_Node* son1=token;
+        Advance();
+        if(!(strcmp(token->word,"==")&&strcmp(token->word,"!=")
+            &&strcmp(token->word,">")&&strcmp(token->word,"<")))
+        {
+            struct Syntax_Node* son2=token;
+            Advance();
+            if(token->type==VALUE){
+                struct Syntax_Node* son3=token;
+                This->Bro=NULL;
+                This->Son=son1;
+                son1->Bro=son2;
+                son2->Bro=son3;
+                return This;
+            }
+        }
+    }
 };
 
 //Expr语法单元的分析程序
 //产生式Expr    --> Term + Expr | Term - Expr | Term
 //first(Expr)=first(Term)=first(Unary)=first(Factor)="("
 struct Syntax_Node * Expr(){
+    struct Syntax_Node* son1=Term();
+    Advance();
+    if(!(strcmp(token->word,"+")&&strcmp(token->word,"-")))
+    {
+        struct Syntax_Node* son2=token;
+        son1->Bro=son2;
+        son2=son2->Bro=Expr();
+    }
+    else
+        Unadvance();
     struct Syntax_Node* This=malloc(sizeof(struct Syntax_Node));
-    This->Word="Expr";
+    This->Bro=NULL;
+    This->Son=son1;
+    This->word="Expr";
     return This;
 };
 
@@ -380,8 +453,20 @@ struct Syntax_Node * Expr(){
 //产生式Term    --> Unary * Term | Unary / Term | Unary
 //first(Term)=first(Unary)=first(Factor)="("
 struct Syntax_Node * Term(){
+    struct Syntax_Node* son1=Unary();
+    Advance();
+    if(!(strcmp(token->word,"*")&&strcmp(token->word,"/")))
+    {
+        struct Syntax_Node*son2=token;
+        son1->Bro=son2;
+        son2=son2->Bro=Term();
+    }
+    else
+        Unadvance();
     struct Syntax_Node* This=malloc(sizeof(struct Syntax_Node));
-    This->Word="Term";
+    This->Bro=NULL;
+    This->Son=son1;
+    This->word="Term";
     return This;
 };
 
@@ -390,7 +475,31 @@ struct Syntax_Node * Term(){
 //first(Unary)=first(Factor)="("
 struct Syntax_Node * Unary(){
     struct Syntax_Node* This=malloc(sizeof(struct Syntax_Node));
-    This->Word="Unary";
+    Advance();
+    struct Syntax_Node* son1=NULL;
+    if(!(strcmp(token->word,"!")&&strcmp(token->word,"-")))
+    {
+        son1=token;
+        Advance();
+        if(!strcmp(token->word,"(")||token->type==VARIABLE||token->type==VALUE)
+        {
+            son1->Bro=Factor();
+        }
+        else
+            Error(1,token,This);
+    }
+    else if(!strcmp(token->word,"(")||token->type==VARIABLE||token->type==VALUE)
+    {
+        son1=Factor();
+        Advance();
+        if(!strcmp(token->word,"++")||!strcmp(token->word,"--"))
+            son1->Bro=token;
+        else
+            Unadvance();
+    }
+    This->Bro=NULL;
+    This->Son=son1;
+    This->word="Unary";
     return This;
 };
 
@@ -399,14 +508,31 @@ struct Syntax_Node * Unary(){
 //first(Factor)="("
 struct Syntax_Node * Factor(){
     struct Syntax_Node* This=malloc(sizeof(struct Syntax_Node));
-    This->Word="Factor";
+    struct Syntax_Node* son1;
+    Advance();
+    if(!(strcmp(token->word,"(")))
+    {
+        son1=token;
+        struct Syntax_Node* son2=Expr();
+        son1->Bro=son2;
+        Advance();
+        if(strcmp(token->word,")"))
+            Error(1,token,This);
+        son2=son2->Bro=token;
+    }
+    else
+        Unadvance();
+    son1=token;
+    This->Bro=NULL;
+    This->Son=son1;
+    This->word="Factor";
     return This;
 };
 
 //错误处理子程序
 void Error(int E_code,struct Syntax_Node *e,struct Syntax_Node *This)
 {
-    printf("in func:%s\t%d\n\tERROR:\tCode:%d %s\n",This->Word,e->len,E_code,Error_Messages[E_code]);
+    printf("in func:%s\t%s\n\tERROR:\tCode:%d %s\n",This->word,e->len,E_code,Error_Messages[E_code]);
 }
 
 
@@ -423,7 +549,7 @@ void PrintSyntaxTree(struct Syntax_Node* Head,int Count,FILE*out)
     if(Head)
     {
         int i=0;
-        i=fprintf(out,"(%s)",Head->Word);
+        i=fprintf(out,"%s",Head->word);
         if(Head->Bro)
             fprintf(out,"->");
         PrintSyntaxTree(Head->Bro,Count+i+2,out);

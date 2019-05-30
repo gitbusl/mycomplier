@@ -70,19 +70,19 @@
 	"Lex_Head.h"
 	"Table.h"
 
-1557746437 source:e:\mycode\c\parser\lexical_analyzer.c\analyse.c
+1559227346 source:e:\mycode\c\parser\lexical_analyzer.c\analyse.c
 	<stdio.h>
 	<stdlib.h>
 	"Lex_Head.h"
 	"Table.h"
 
-1556367797 e:\mycode\c\parser\lexical_analyzer.c\lex_head.h
+1559227328 e:\mycode\c\parser\lexical_analyzer.c\lex_head.h
 	<stdio.h>
 
-1557970953 e:\mycode\c\parser\lexical_analyzer.c\table.h
+1559227328 e:\mycode\c\parser\lexical_analyzer.c\table.h
 	"Lex_Head.h"
 
-1557969963 source:e:\mycode\c\parser\lexical_analyzer.c\lex_function.c
+1559227364 source:e:\mycode\c\parser\lexical_analyzer.c\lex_function.c
 	"Lex_Head.h"
 	"Table.h"
 	<string.h>
@@ -90,20 +90,20 @@
 	<stdlib.h>
 	<ctype.h>
 
-1556367776 source:e:\mycode\c\parser\lexical_analyzer.c\table.c
+1559227328 source:e:\mycode\c\parser\lexical_analyzer.c\table.c
 	"Table.h"
 	<string.h>
 	<malloc.h>
 
-1558966986 source:e:\mycode\c\parser\parser.c\main.c
+1559227455 source:e:\mycode\c\parser\parser.c\main.c
 	<stdio.h>
 	<stdlib.h>
 	"tree.h"
 	"Parser.c"
 
-1558965499 e:\mycode\c\parser\parser.c\tree.h
+1559227239 e:\mycode\c\parser\parser.c\tree.h
 
-1558967220 e:\mycode\c\parser\parser.c\parser.c
+1559227589 e:\mycode\c\parser\parser.c\parser.c
 	<stdio.h>
 	<stdlib.h>
 	<string.h>

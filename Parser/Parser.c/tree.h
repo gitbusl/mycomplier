@@ -18,17 +18,17 @@ Block   --> { Decls Stmts }
 Decls   --> Decl Decls | null
 Decl    --> Basic Vari = Val ;
 Stmts   --> Stmt Stmts | null
-Stmt    --> if ( Bool ) Stmt ELSE
-        --> while ( Bool ) {Stmt}
-        --> Vari = Bool ;
+Stmt    --> if ( Bool ) block ELSE
+        --> while ( Bool ) block
+        --> Vari = Bool ;!
         --> Return 0 ;
 		--> Vari("something");
-ELSE    --> else Stmt | null
-Bool    --> Expr == Expr | Expr != Expr | Expr > Expr | Expr < Expr | Expr
+ELSE    --> else block
+Bool    --> Vari == Value | Vari != Value | Vari > Value | Vari < Value
 Expr    --> Term + Expr | Term - Expr | Term
 Term    --> Unary * Term | Unary / Term | Unary
 Unary   --> ! Factor | - Factor | Factor ++ | Factor -- | Factor
-Factor  --> ( Bool ) | Vari | Value
+Factor  --> ( Expr ) | Vari | Value
 */
 // 二叉语法树的结点
 struct Syntax_Node
@@ -36,7 +36,7 @@ struct Syntax_Node
     int type;//单词类型
 	int Varnum;//单词在相关表中的编号
 	int number;//单词在词串中的编号
-	char* Word;//单词
+	char* word;//单词
 	double value;//变量或常量的值
 	struct Syntax_Node* Bro;//语法单元兄弟结点(右节点)
 	struct Syntax_Node* Son;//语法单元孩子结点(左节点)
@@ -51,15 +51,15 @@ static char* Error_Messages[]=
     "The lack of word\0"
 };
 //语法分析用到的全局变量
-static struct WordNode* Now;//指向下一个分析的词法单元结点
-static struct WordNode* Last;//指向正在分析的词法单元结点
+static struct wordNode* Now;//指向下一个分析的词法单元结点
+static struct wordNode* Last;//指向正在分析的词法单元结点
 static struct Syntax_Node * Last_token;//指向上一个分析的语法单元结点
 static struct Syntax_Node * token;//指向正在分析的语法单元结点
 
 void Forword();//Forword 取出下一个待分析的语法单元结点
 void UnForword();//UnForword 回退语法单元结点
 //具体的递归下降语法分析函数
-struct Syntax_Node * Program(struct WordNode *head);//Program 语法单元的分析程序
+struct Syntax_Node * Program(struct wordNode *head);//Program 语法单元的分析程序
 struct Syntax_Node * Res();//Res 语法单元的分析程序
 struct Syntax_Node * Re();//Re 语法单元的分析程序
 struct Syntax_Node * Main_Func();//Main_Func 语法单元的分析程序

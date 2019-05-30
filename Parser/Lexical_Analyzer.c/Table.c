@@ -4,7 +4,7 @@
 #include<malloc.h>
 
 //变量表查找 单词在变量表中的位置  不在表中时,添加到表中再返回序号
-int SearchVar(struct WordNode* node)
+int SearchVar(struct wordNode* node)
 {
     struct VariableNode* varnode = head;
 
@@ -14,7 +14,7 @@ int SearchVar(struct WordNode* node)
     }
     while (varnode != NULL)//查找结点
     {
-        if (node->type == varnode->Type && !strcmp(node->Word, varnode->name))
+        if (node->type == varnode->Type && !strcmp(node->word, varnode->name))
         {
             return varnode->index;
         }
@@ -31,25 +31,25 @@ int SearchVar(struct WordNode* node)
 
 }
 //变量表初始化函数，创建第一个节点
-int  InitVarNode(struct WordNode* node)
+int  InitVarNode(struct wordNode* node)
 {
     struct VariableNode* NewNode = malloc(sizeof(struct VariableNode));
     NewNode->index = 0;
     NewNode->next = NULL;
     NewNode->Type = node->type;
-    NewNode->name = node->Word;
+    NewNode->name = node->word;
     NewNode->Value = node->value;
     head=NewNode;
     return 1;
 }
 //标识符表插入函数  尾插法
-int AddVarNode(struct WordNode* node)
+int AddVarNode(struct wordNode* node)
 {
     head->index++;
     struct VariableNode* NewNode = malloc(sizeof(struct VariableNode));
     NewNode->index = head->index;
     NewNode->Type = node->type;
-    NewNode->name = node->Word;
+    NewNode->name = node->word;
     NewNode->Value = node->value;
     NewNode->next = head->next;
     head->next=NewNode;
@@ -57,7 +57,7 @@ int AddVarNode(struct WordNode* node)
 }
 
 //查找表(关键字,分隔符,运算符)    单词在表中的序号    不在表中时,返回-1
-int Search(struct WordNode* node, int Type)
+int Search(struct wordNode* node, int Type)
 {
     char** Table;
     int length = 0;
@@ -82,7 +82,7 @@ int Search(struct WordNode* node, int Type)
     }
     for (i = 0; i < length; i++)
     {
-        if (!strcmp(Table[i], node->Word))return i;
+        if (!strcmp(Table[i], node->word))return i;
     }
     return -1;
 }

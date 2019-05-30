@@ -49,9 +49,9 @@ struct VariableNode
 };
 
 static struct VariableNode* head;//全局变量作为整个编译过程的变量表头
-int InitVarNode(struct WordNode* node);//初始化变量表
-int AddVarNode(struct WordNode* node);//变量表节点插入
-int SearchVar(struct WordNode*);//从变量表查找
-int Search(struct WordNode*, int);//从表(关键字,分隔符,运算符)查找
+int InitVarNode(struct wordNode* node);//初始化变量表
+int AddVarNode(struct wordNode* node);//变量表节点插入
+int SearchVar(struct wordNode*);//从变量表查找
+int Search(struct wordNode*, int);//从表(关键字,分隔符,运算符)查找
 int OutPutVar(FILE* out);//输出变量表内容
 #endif // TABLE_H_
